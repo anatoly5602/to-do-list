@@ -1,6 +1,34 @@
+from flask import Flask, request, jsonify
+from pymongo import MongoClient
+
+
 import tkinter as tk
 from tkinter import messagebox
 import pickle
+
+app = Flask(__name__)
+
+try:
+    client = MongoClient('localhost', 27017)
+    db = client.todo_db
+    todos = db.todos
+except Exception as e:
+    print(f"Error connecting to MongoDB: {e}")
+
+
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    tasks = list(todos.find({}))
+    for task in tasks:
+        task['_id'] = str(task['_id'])
+    return jsonify(tasks)
+
+@app.route('/tasks', methods=['POST'])
+def add_task():
+    task = request.json
+    todos.insert_one(task)
+    task['_id'] = str(task['_id'])
+    return jsonify(task), 201
 
 class ToDoApp:
     def __init__(self, root):
@@ -120,6 +148,7 @@ class ToDoApp:
             messagebox.showwarning("Error", f"An error occurred: {e}")
 
 if __name__ == "__main__":
+    app.run(host='0.0.0.0')
     root = tk.Tk()
     app = ToDoApp(root)
     root.mainloop()

@@ -23,4 +23,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 
 # Start the application using Gunicorn with multiple worker processes
-CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:5000", "--timeout=120", "app:app"]

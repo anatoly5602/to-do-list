@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <script>
+        async function addTask() {
+            const name = document.getElementById('taskName').value;
+            const description = document.getElementById('taskDescription').value;
+            const response = await fetch('/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name: name, description: description})
+            });
+            if (response.ok) {
+                location.reload();  // Reload the page to show the new task
+            }
+        }
+
+        async function deleteTask(taskId) {
+            const response = await fetch(`/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                location.reload();  // Reload the page to remove the deleted task
+            }
+        }
+
+        async function updateTask(taskId) {
+            const name = document.getElementById(`name-${taskId}`).value;
+            const description = document.getElementById(`description-${taskId}`).value;
+            const status = document.getElementById(`status-${taskId}`).value;
+            const response = await fetch(`/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name: name, description: description, status: status})
+            });
+            if (response.ok) {
+                location.reload();  // Reload the page to show the updated task
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <ul>
+        {% for task in tasks %}
+        <li>
+            <input type="text" id="name-{{ task._id }}" value="{{ task.name }}">
+            <input type="text" id="description-{{ task._id }}" value="{{ task.description }}">
+            <select id="status-{{ task._id }}">
+                <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+            </select>
+            <button onclick="updateTask('{{ task._id }}')">Update</button>
+            <button onclick="deleteTask('{{ task._id }}')">Delete</button>
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>Add New Task</h2>
+    <input type="text" id="taskName" placeholder="Task Name">
+    <input type="text" id="taskDescription" placeholder="Task Description">
+    <button onclick="addTask()">Add Task</button>
+</body>
+</html>

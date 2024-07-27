@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/anatoly5602/to-do-list.git'
+                git branch: '${env.BRANCH_NAME}', url: 'https://github.com/anatoly5602/to-do-list.git'
             }
         }
 

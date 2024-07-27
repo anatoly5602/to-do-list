@@ -3,14 +3,14 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE = "anatoly5602/todo-app:${env.BRANCH_NAME}"
+        DOCKER_IMAGE = "anatoly5602/todo-app:${env.main}"
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: '${env.BRANCH_NAME}', url: 'https://github.com/anatoly5602/to-do-list.git'
+                git branch: '${env.main}', url: 'https://github.com/anatoly5602/to-do-list.git'
             }
         }
 
